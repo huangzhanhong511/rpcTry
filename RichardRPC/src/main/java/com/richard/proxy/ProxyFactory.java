@@ -1,15 +1,11 @@
 package com.richard.proxy;
 
-import com.richard.LoadBalance;
 import com.richard.common.Invocation;
-import com.richard.protocol.HttpClient;
-import com.richard.register.MapRemoteRegister;
+import com.richard.protocol.http.httpClient.HttpClient;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.List;
 
 public class ProxyFactory {
     public static <T> T getProxy(Class interfaceClass) {

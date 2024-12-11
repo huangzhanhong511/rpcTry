@@ -1,6 +1,8 @@
-package com.richard.protocol;
+package com.richard.protocol.http.httpClient;
 
 import com.richard.common.Invocation;
+import com.richard.compress.gzip.GzipCompress;
+import com.richard.serialization.kyro.KyroSerializer;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -13,6 +15,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 public class HttpClient {
+    KyroSerializer kyroSerializer = new KyroSerializer();
+    GzipCompress gzipCompress = new GzipCompress();
+
     public String send(String hostname, Integer port, Invocation invocation) {
         try {
             URL url = new URL("http", hostname,port,"/");
@@ -21,13 +26,21 @@ public class HttpClient {
             httpURLConnection.setRequestMethod("POST");
 
             //配置
+            Long sendTime = System.currentTimeMillis();
             OutputStream outputStream = httpURLConnection.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(outputStream);
             oos.writeObject(invocation);
             oos.flush();
             oos.close();
+            //使用kryo和gzip做序列化和反序列化
+//            byte[] serializedAndCompressedData = requestSerializeAndCompress(invocation);
+//            outputStream.write(serializedAndCompressedData);
 
             InputStream inputStream = httpURLConnection.getInputStream();
+            Long receiveTime = System.currentTimeMillis();
+            System.out.println("This is netWork time:"+(receiveTime - sendTime));
+//            byte[] responseBytes = IOUtils.toByteArray(inputStream);
+//            String result = requestDeserializeAndDecompress(responseBytes, String.class);
             String result = IOUtils.toString(inputStream);
             return result;
         } catch (ProtocolException e) {
@@ -37,5 +50,15 @@ public class HttpClient {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public byte[] requestSerializeAndCompress(Invocation invocation) {
+        byte[] serializedBytes = kyroSerializer.serialize(invocation);
+        return gzipCompress.compress(serializedBytes);
+    }
+
+    public <T> T requestDeserializeAndDecompress(byte[] serializedBytes, Class<T> interfaceClass) {
+        byte[] deCompressedBytes = gzipCompress.decompress(serializedBytes);
+        return kyroSerializer.deserialize(deCompressedBytes,interfaceClass);
     }
 }

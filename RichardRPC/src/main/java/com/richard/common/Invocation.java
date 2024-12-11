@@ -1,7 +1,11 @@
 package com.richard.common;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
+@NoArgsConstructor
 public class Invocation implements Serializable {
     private String interfaceName;
     private String methodName;

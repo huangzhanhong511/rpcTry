@@ -1,6 +1,6 @@
 package com.richard;
 
-import com.richard.protocol.HttpServer;
+import com.richard.protocol.http.httpServer.HttpServer;
 import com.richard.register.LocalRegister;
 import com.richard.register.MapRemoteRegister;
 

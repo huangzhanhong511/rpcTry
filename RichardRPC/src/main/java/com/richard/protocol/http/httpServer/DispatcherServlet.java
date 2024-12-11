@@ -1,4 +1,4 @@
-package com.richard.protocol;
+package com.richard.protocol.http.httpServer;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
