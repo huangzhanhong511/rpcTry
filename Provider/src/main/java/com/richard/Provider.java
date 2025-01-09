@@ -14,8 +14,8 @@ public class Provider {
         LocalRegister.register(HelloService.class.getName(), HelloServiceImpl.class);
 
         //注册中心注册
-        URL url = new URL("http://localhost:8080/");
-        MapRemoteRegister.regist(HelloService.class.getName(),url);
+//        URL url = new URL("http://localhost:8080/");
+//        MapRemoteRegister.regist(HelloService.class.getName(),url);
 
 
         //接收网络请求，Http，Socket,TCP, UDP（更好的是提供多种选择让用户去选择）
