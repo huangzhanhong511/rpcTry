@@ -1,4 +1,4 @@
-package com.richard;
+package com.richard.loadBalance;
 
 import java.net.URL;
 import java.util.List;

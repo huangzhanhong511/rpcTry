@@ -2,6 +2,8 @@ package com.richard.proxy;
 
 import com.richard.common.Invocation;
 import com.richard.protocol.http.httpClient.HttpClient;
+import com.richard.register.zookeeper.ZookeeperServiceDiscovery;
+import com.richard.register.zookeeper.ZookeeperServiceRegistry;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,14 +18,22 @@ public class ProxyFactory {
 
                 HttpClient httpClient = new HttpClient();
 
-                //Service Found
-//                List<URL> urls = MapRemoteRegister.get(interfaceClass.getName());
-//
-//                //Load Balance
-//                URL targetUrl = LoadBalance.randomUrl(urls);
-//
-//                return httpClient.send(targetUrl.getHost(), targetUrl.getPort(), invocation);
-                return httpClient.send("localhost",8080,invocation);
+                ZookeeperServiceRegistry registry = new ZookeeperServiceRegistry();
+                ZookeeperServiceDiscovery discovery = new ZookeeperServiceDiscovery(registry.getClient());
+                String serviceAddress = discovery.discoveryService("TestZookeeper");
+                System.out.println("This is serviceAddress: " + serviceAddress);
+
+                String[] addressParts = serviceAddress.split(":"); // 分割字符串
+                String host = addressParts[0]; // 主机名，例如 "localhost"
+                int port = Integer.parseInt(addressParts[1]); // 端口号，例如 8080
+
+                // 打印解析后的主机名和端口号，方便调试
+                System.out.println("Parsed host: " + host);
+                System.out.println("Parsed port: " + port);
+
+                // 调用 httpClient.send 方法
+                return httpClient.send(host, port, invocation);
+                //return httpClient.send("localhost",8080,invocation);
             }
         });
         return (T) proxyInstance;
